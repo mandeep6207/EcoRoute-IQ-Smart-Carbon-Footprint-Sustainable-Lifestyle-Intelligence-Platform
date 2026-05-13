@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Dict
 
+from utils.conversions import annual_to_monthly, kwh_to_co2, km_to_miles
+
 
 def clamp(value: float, minimum: float = 0, maximum: float = 100) -> float:
     return max(minimum, min(maximum, value))
@@ -20,10 +22,10 @@ def to_float(payload: Dict[str, float], key: str) -> float:
 
 
 def calculate_emissions(daily_car: float, daily_public: float, electricity: float, meat: float, flights: float, recycling: float) -> Dict[str, float]:
-    transport_emissions = (daily_car * 30 * 0.192) + (daily_public * 30 * 0.055)
-    home_emissions = electricity * 0.42
+    transport_emissions = (km_to_miles(daily_car) * 30 * 0.192) + (km_to_miles(daily_public) * 30 * 0.055)
+    home_emissions = kwh_to_co2(electricity)
     diet_emissions = meat * 4.33 * 2.3
-    travel_emissions = flights * 230 / 12
+    travel_emissions = annual_to_monthly(flights * 230)
     recycling_credit = recycling * 1.2
 
     return {
