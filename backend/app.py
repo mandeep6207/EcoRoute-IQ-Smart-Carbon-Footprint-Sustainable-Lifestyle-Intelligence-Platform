@@ -13,6 +13,7 @@ from flask_cors import CORS
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from config import ALLOWED_ORIGINS, AppConfig
+from utils.db import execute_write, fetch_all, fetch_one
 from utils.analyzer import analyze_lifestyle
 from utils.sanitization import sanitize_email, sanitize_number, sanitize_text
 
@@ -88,7 +89,7 @@ def get_current_user() -> sqlite3.Row | None:
     if not user_id:
         return None
     connection = get_db()
-    user = connection.execute("SELECT id, name, email, created_at FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = fetch_one(connection, "SELECT id, name, email, created_at FROM users WHERE id = ?", (user_id,))
     connection.close()
     return user
 
@@ -141,19 +142,18 @@ def signup():
         return jsonify({"error": "Password must be at least 6 characters long."}), 400
 
     connection = get_db()
-    existing = connection.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    existing = fetch_one(connection, "SELECT id FROM users WHERE email = ?", (email,))
     if existing:
         connection.close()
         return jsonify({"error": "An account with this email already exists."}), 409
 
     password_hash = generate_password_hash(password)
     created_at = datetime.utcnow().isoformat()
-    cursor = connection.execute(
+    user_id = execute_write(
+        connection,
         "INSERT INTO users (name, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
         (name, email, password_hash, created_at),
     )
-    connection.commit()
-    user_id = cursor.lastrowid
     connection.close()
 
     session.permanent = True
@@ -176,7 +176,7 @@ def login():
         return jsonify({"error": "Email and password are required."}), 400
 
     connection = get_db()
-    user = connection.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    user = fetch_one(connection, "SELECT * FROM users WHERE email = ?", (email,))
     connection.close()
 
     if not user or not check_password_hash(user["password_hash"], password):
@@ -233,7 +233,8 @@ def analyze():
     created_at = datetime.utcnow().isoformat()
 
     connection = get_db()
-    connection.execute(
+    execute_write(
+        connection,
         """
         INSERT INTO analyses (
             user_id, payload, result, carbon_score, monthly_co2, sustainability_rating, created_at
@@ -249,7 +250,6 @@ def analyze():
             created_at,
         ),
     )
-    connection.commit()
     connection.close()
 
     return jsonify({"message": "Analysis completed.", "analysis": result, "created_at": created_at})
@@ -259,10 +259,11 @@ def analyze():
 @require_auth
 def history():
     connection = get_db()
-    rows = connection.execute(
+    rows = fetch_all(
+        connection,
         "SELECT * FROM analyses WHERE user_id = ? ORDER BY datetime(created_at) DESC",
         (session["user_id"],),
-    ).fetchall()
+    )
     connection.close()
     return jsonify({"history": [serialize_analysis(row) for row in rows]})
 
@@ -272,10 +273,11 @@ def history():
 def profile():
     user = get_current_user()
     connection = get_db()
-    analyses = connection.execute(
+    analyses = fetch_all(
+        connection,
         "SELECT * FROM analyses WHERE user_id = ? ORDER BY datetime(created_at) DESC",
         (session["user_id"],),
-    ).fetchall()
+    )
     connection.close()
 
     if analyses:
