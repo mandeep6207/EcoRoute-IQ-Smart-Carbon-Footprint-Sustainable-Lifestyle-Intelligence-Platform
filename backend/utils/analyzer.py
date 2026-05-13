@@ -109,16 +109,36 @@ def analyze_lifestyle(payload: Dict[str, float]) -> Dict[str, object]:
     top_emission_source = max(positive_sources, key=lambda source: positive_sources[source]) if positive_sources else "Balanced lifestyle"
 
     insights = []
+    if score <= 30:
+        insights.append("Your current routine is already in the eco-friendly band, so marginal gains matter most.")
+    elif score <= 70:
+        insights.append("You are in the moderate impact band, where a few habit changes can move the score quickly.")
+    else:
+        insights.append("Your footprint is in the high-impact band, with clear room for targeted reductions.")
+
     if daily_car > daily_public:
         insights.append("Private vehicle use is dominating your transport emissions.")
+    elif daily_public > 0:
+        insights.append("Public transport is helping offset some of your transport footprint.")
+
     if electricity > 300:
         insights.append("Your electricity use is above a low-impact monthly range.")
+    elif electricity > 0:
+        insights.append("Your household energy use is staying within a relatively efficient range.")
+
     if meat >= 7:
         insights.append("Frequent meat meals are materially increasing your footprint.")
+    elif meat > 0:
+        insights.append("Your diet has some flexibility for low-carbon swaps without major disruption.")
+
     if flights > 0:
         insights.append("Flights create a sharp annual spike in your carbon footprint.")
+    if recycling >= 4:
+        insights.append("Your recycling frequency is strong enough to make a measurable dent in waste-related impact.")
     if recycling >= 3:
         insights.append("Your recycling habit is helping offset part of your footprint.")
+
+    insights.append(f"{top_emission_source} is your largest lever for short-term reduction.")
 
     if not insights:
         insights.append("Your current lifestyle mix is relatively balanced across major emission sources.")
