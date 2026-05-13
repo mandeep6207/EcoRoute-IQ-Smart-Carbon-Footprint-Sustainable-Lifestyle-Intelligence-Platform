@@ -142,6 +142,12 @@ h1, h2, h3, h4, h5 {
   margin-bottom: 24px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .page-title {
   font-size: 2rem;
 }
@@ -153,6 +159,34 @@ h1, h2, h3, h4, h5 {
   border: 1px solid rgba(56, 189, 248, 0.22);
   color: #dff5ff;
   font-weight: 700;
+}
+
+.mobile-nav-toggle {
+  display: none;
+  border-radius: 999px;
+}
+
+.mobile-nav-panel {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  margin-bottom: 18px;
+  border-radius: 22px;
+  background: rgba(9, 21, 37, 0.9);
+  border: 1px solid var(--border);
+}
+
+.mobile-nav-link {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  border: 1px solid transparent;
+}
+
+.mobile-nav-link.active {
+  border-color: rgba(56, 189, 248, 0.28);
+  background: rgba(56, 189, 248, 0.12);
 }
 
 .content-grid,
@@ -610,6 +644,10 @@ h1, h2, h3, h4, h5 {
   .landing-page,
   .auth-page {
     padding: 14px;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex;
   }
 
   .topbar,

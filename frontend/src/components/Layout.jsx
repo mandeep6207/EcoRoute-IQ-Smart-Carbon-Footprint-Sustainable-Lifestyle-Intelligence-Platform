@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -15,6 +15,7 @@ export default function Layout() {
   const { user, logout } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -25,6 +26,8 @@ export default function Layout() {
       showToast(error?.response?.data?.error || 'Unable to log out.', 'error')
     }
   }
+
+  const closeMobileNav = () => setMobileNavOpen(false)
 
   return (
     <div className="app-shell">
@@ -59,8 +62,23 @@ export default function Layout() {
             <p className="eyebrow mb-1">EcoRoute IQ</p>
             <h1 className="page-title mb-0">Sustainability command center</h1>
           </div>
-          <div className="topbar-pill">Premium eco analytics</div>
+          <div className="topbar-actions">
+            <div className="topbar-pill d-none d-md-inline-flex">Premium eco analytics</div>
+            <button type="button" className="btn btn-outline-light mobile-nav-toggle" onClick={() => setMobileNavOpen((current) => !current)}>
+              {mobileNavOpen ? 'Close' : 'Menu'}
+            </button>
+          </div>
         </header>
+
+        {mobileNavOpen && (
+          <div className="mobile-nav-panel d-md-none">
+            {links.map((link) => (
+              <NavLink key={link.to} to={link.to} onClick={closeMobileNav} className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}>
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
+        )}
 
         <section className="content-grid">
           <Outlet />
