@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import api from '../services/api'
+import { validateAnalysisPayload, validateProfilePayload, validateUserPayload } from '../services/responseGuards'
 
 const AuthContext = createContext(null)
 
@@ -11,8 +12,9 @@ export function AuthProvider({ children }) {
   const hydrateProfile = useCallback(async () => {
     try {
       const response = await api.get('/profile')
-      setUser(response.data.user)
-      setProfile(response.data)
+      const validatedProfile = validateProfilePayload(response.data)
+      setUser(validateUserPayload(validatedProfile.user))
+      setProfile(validatedProfile)
     } catch (error) {
       setUser(null)
       setProfile(null)
@@ -27,14 +29,14 @@ export function AuthProvider({ children }) {
 
   const signup = useCallback(async (payload) => {
     const response = await api.post('/signup', payload)
-    setUser(response.data.user)
+    setUser(validateUserPayload(response.data.user))
     await hydrateProfile()
     return response.data
   }, [hydrateProfile])
 
   const login = useCallback(async (payload) => {
     const response = await api.post('/login', payload)
-    setUser(response.data.user)
+    setUser(validateUserPayload(response.data.user))
     await hydrateProfile()
     return response.data
   }, [hydrateProfile])
@@ -47,6 +49,7 @@ export function AuthProvider({ children }) {
 
   const analyzeLifestyle = useCallback(async (payload) => {
     const response = await api.post('/analyze', payload)
+    validateAnalysisPayload(response.data)
     await hydrateProfile()
     return response.data
   }, [hydrateProfile])
