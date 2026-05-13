@@ -26,6 +26,8 @@ config = AppConfig()
 app.config["SECRET_KEY"] = config.secret_key
 app.config["SESSION_COOKIE_SAMESITE"] = config.session_cookie_samesite
 app.config["SESSION_COOKIE_SECURE"] = config.session_cookie_secure
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 app.permanent_session_lifetime = timedelta(days=config.permanent_session_days)
 
 CORS(
@@ -39,6 +41,12 @@ def get_db() -> sqlite3.Connection:
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     return connection
+
+
+@app.before_request
+def refresh_authenticated_session() -> None:
+    if session.get("user_id"):
+        session.permanent = True
 
 
 def init_db() -> None:
