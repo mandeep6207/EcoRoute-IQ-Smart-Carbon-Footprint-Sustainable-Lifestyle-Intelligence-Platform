@@ -12,6 +12,7 @@ from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from config import ALLOWED_ORIGINS, AppConfig
 from utils.analyzer import analyze_lifestyle
 
 
@@ -19,15 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent
 DATABASE_PATH = BASE_DIR / "database.db"
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "ecoroute-iq-dev-secret")
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False
-app.permanent_session_lifetime = timedelta(days=7)
+config = AppConfig()
+app.config["SECRET_KEY"] = config.secret_key
+app.config["SESSION_COOKIE_SAMESITE"] = config.session_cookie_samesite
+app.config["SESSION_COOKIE_SECURE"] = config.session_cookie_secure
+app.permanent_session_lifetime = timedelta(days=config.permanent_session_days)
 
 CORS(
     app,
     supports_credentials=True,
-    origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173"],
+    origins=ALLOWED_ORIGINS,
 )
 
 
@@ -295,7 +297,7 @@ init_db()
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 8000)),
-        debug=os.environ.get("FLASK_DEBUG", "0") == "1",
+        port=config.default_port,
+        debug=config.flask_debug,
         use_reloader=False,
     )
