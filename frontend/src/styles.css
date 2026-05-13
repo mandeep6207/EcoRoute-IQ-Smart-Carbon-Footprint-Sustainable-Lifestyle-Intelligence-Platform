@@ -480,8 +480,31 @@ h1, h2, h3, h4, h5 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   box-shadow: var(--shadow);
   animation: slideIn 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.eco-toast-body {
+  display: grid;
+  gap: 4px;
+}
+
+.eco-toast-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  opacity: 0.84;
+}
+
+.toast-progress {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  animation: toastProgress 3.2s linear forwards;
 }
 
 .toast-success { background: linear-gradient(135deg, #16a34a, #22c55e); }
@@ -496,6 +519,17 @@ h1, h2, h3, h4, h5 {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes toastProgress {
+  from {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(0);
+    transform-origin: left;
   }
 }
 
