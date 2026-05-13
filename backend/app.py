@@ -14,6 +14,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from config import ALLOWED_ORIGINS, AppConfig
 from utils.analyzer import analyze_lifestyle
+from utils.sanitization import sanitize_email, sanitize_number, sanitize_text
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -129,9 +130,9 @@ def server_error(error):
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json(silent=True) or {}
-    name = (data.get("name") or "").strip()
-    email = (data.get("email") or "").strip().lower()
-    password = data.get("password") or ""
+    name = sanitize_text(data.get("name"))
+    email = sanitize_email(data.get("email"))
+    password = sanitize_text(data.get("password"))
 
     if not name or not email or not password:
         return jsonify({"error": "Name, email, and password are required."}), 400
@@ -168,8 +169,8 @@ def signup():
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True) or {}
-    email = (data.get("email") or "").strip().lower()
-    password = data.get("password") or ""
+    email = sanitize_email(data.get("email"))
+    password = sanitize_text(data.get("password"))
 
     if not email or not password:
         return jsonify({"error": "Email and password are required."}), 400
@@ -208,7 +209,7 @@ def validate_lifestyle_payload(data: dict) -> tuple[dict | None, tuple[dict, int
     ]
     parsed = {}
     for field in fields:
-        value = data.get(field)
+        value = sanitize_number(data.get(field))
         if value in (None, ""):
             return None, ({"error": f"{field} is required."}, 400)
         try:
