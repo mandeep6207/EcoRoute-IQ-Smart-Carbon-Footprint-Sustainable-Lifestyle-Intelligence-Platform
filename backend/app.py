@@ -106,6 +106,26 @@ def serialize_analysis(row: sqlite3.Row) -> dict:
     }
 
 
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({"error": "Bad request.", "details": str(error)}), 400
+
+
+@app.errorhandler(401)
+def unauthorized(error):
+    return jsonify({"error": "Unauthorized.", "details": str(error)}), 401
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"error": "Endpoint not found.", "details": str(error)}), 404
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return jsonify({"error": "Internal server error.", "details": str(error)}), 500
+
+
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json(silent=True) or {}
