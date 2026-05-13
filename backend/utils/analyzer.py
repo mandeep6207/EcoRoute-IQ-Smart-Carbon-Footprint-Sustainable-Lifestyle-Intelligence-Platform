@@ -80,6 +80,43 @@ def build_reduction_opportunities(daily_car: float, electricity: float, meat: fl
     ]
 
 
+def build_recommendations(daily_car: float, daily_public: float, electricity: float, meat: float, flights: float, recycling: float) -> list[str]:
+    recommendations: list[str] = []
+
+    if daily_car >= 10:
+        recommendations.append("Cut one daily car trip by combining errands or shifting to a remote alternative.")
+    elif daily_car > 0:
+        recommendations.append("Replace short car trips with walking, cycling, or carpooling twice a week.")
+
+    if daily_public > daily_car:
+        recommendations.append("Keep leaning into public transport for longer trips and work commutes.")
+
+    if electricity >= 400:
+        recommendations.append("Lower electricity use with LEDs, standby power cuts, and tighter HVAC targets.")
+    elif electricity > 0:
+        recommendations.append("Use smart plugs and reduce idle appliance load to trim household energy waste.")
+
+    if meat >= 7:
+        recommendations.append("Replace at least half of your meat meals with plant-forward dishes this week.")
+    elif meat > 0:
+        recommendations.append("Shift two meals per week toward plant-based proteins to lower diet emissions.")
+
+    if flights >= 4:
+        recommendations.append("Cluster travel and consider rail or virtual meetings for recurring trips.")
+    elif flights > 0:
+        recommendations.append("Reserve flights for essential travel and offset them with lower-carbon choices elsewhere.")
+
+    if recycling <= 2:
+        recommendations.append("Make recycling more consistent by separating waste streams at the source.")
+    else:
+        recommendations.append("Keep recycling regular and look for reuse or repair opportunities next.")
+
+    if not recommendations:
+        recommendations.append("Maintain your current habits and revisit the next highest impact category for improvement.")
+
+    return recommendations
+
+
 def analyze_lifestyle(payload: Dict[str, float]) -> Dict[str, object]:
     daily_car = to_float(payload, "daily_car_km")
     daily_public = to_float(payload, "daily_public_transport_km")
@@ -143,20 +180,7 @@ def analyze_lifestyle(payload: Dict[str, float]) -> Dict[str, object]:
     if not insights:
         insights.append("Your current lifestyle mix is relatively balanced across major emission sources.")
 
-    recommendations = []
-    if daily_car > 0:
-        recommendations.append("Replace short car trips with walking, cycling, or carpooling at least 2 days per week.")
-    if electricity > 0:
-        recommendations.append("Reduce standby power, switch to LEDs, and set cooling/heating targets.")
-    if meat > 0:
-        recommendations.append("Swap 2-3 meat meals per week for plant-based alternatives.")
-    if flights > 0:
-        recommendations.append("Bundle travel and choose rail or virtual meetings when possible.")
-    if recycling < 3:
-        recommendations.append("Increase recycling consistency and separate waste streams at home.")
-
-    if not recommendations:
-        recommendations.append("Keep your routine steady and look for one small reduction target each week.")
+    recommendations = build_recommendations(daily_car, daily_public, electricity, meat, flights, recycling)
 
     reduction_opportunities = build_reduction_opportunities(daily_car, electricity, meat, flights, recycling)
 
