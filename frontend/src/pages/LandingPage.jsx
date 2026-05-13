@@ -20,7 +20,7 @@ export default function LandingPage() {
   return (
     <div className="landing-page">
       <div className="hero-shell">
-        <div className="hero-copy">
+        <div className="hero-copy landing-reveal landing-reveal-1">
           <span className="hero-kicker">EcoRoute IQ</span>
           <h1>Turn everyday habits into measurable climate intelligence.</h1>
           <p>
@@ -47,18 +47,18 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="hero-panel">
-          <div className="floating-card floating-card-top">
+        <div className="hero-panel landing-reveal landing-reveal-2">
+          <div className="floating-card floating-card-top float-delay-1">
             <div className="label">Latest score</div>
             <div className="value">38 / 100</div>
             <div className="subtext">Moderate Impact</div>
           </div>
-          <div className="floating-card floating-card-mid">
+          <div className="floating-card floating-card-mid float-delay-2">
             <div className="label">Top source</div>
             <div className="value">Transport</div>
             <div className="subtext">High leverage opportunity</div>
           </div>
-          <div className="floating-card floating-card-bottom">
+          <div className="floating-card floating-card-bottom float-delay-3">
             <div className="label">Monthly CO₂</div>
             <div className="value">186 kg</div>
             <div className="subtext">Based on lifestyle profile</div>
@@ -67,8 +67,8 @@ export default function LandingPage() {
       </div>
 
       <section className="feature-grid">
-        {features.map((feature) => (
-          <article key={feature.title} className="feature-card">
+        {features.map((feature, index) => (
+          <article key={feature.title} className={`feature-card landing-reveal landing-reveal-${index + 1}`}>
             <h3>{feature.title}</h3>
             <p>{feature.text}</p>
           </article>
