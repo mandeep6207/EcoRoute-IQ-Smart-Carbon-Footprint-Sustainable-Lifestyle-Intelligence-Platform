@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.log
+.coverage
+coverage/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -13,5 +16,11 @@ frontend/node_modules/
 frontend/dist/
 backend/database.db
 .env
+.env.*
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
+*.sqlite3
+*.db-journal
+
