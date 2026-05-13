@@ -10,9 +10,9 @@ from pathlib import Path
 import pandas as pd
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from config import ALLOWED_ORIGINS, AppConfig
+from utils.auth import build_user_payload, hash_password, verify_password
 from utils.db import execute_write, fetch_all, fetch_one
 from utils.analyzer import analyze_lifestyle
 from utils.sanitization import sanitize_email, sanitize_number, sanitize_text
@@ -147,7 +147,7 @@ def signup():
         connection.close()
         return jsonify({"error": "An account with this email already exists."}), 409
 
-    password_hash = generate_password_hash(password)
+    password_hash = hash_password(password)
     created_at = datetime.utcnow().isoformat()
     user_id = execute_write(
         connection,
@@ -179,7 +179,7 @@ def login():
     user = fetch_one(connection, "SELECT * FROM users WHERE email = ?", (email,))
     connection.close()
 
-    if not user or not check_password_hash(user["password_hash"], password):
+    if not user or not verify_password(user["password_hash"], password):
         return jsonify({"error": "Invalid email or password."}), 401
 
     session.permanent = True
@@ -188,7 +188,7 @@ def login():
 
     return jsonify({
         "message": "Login successful.",
-        "user": {"id": user["id"], "name": user["name"], "email": user["email"], "created_at": user["created_at"]},
+        "user": build_user_payload(user),
     })
 
 
