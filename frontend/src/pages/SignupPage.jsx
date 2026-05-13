@@ -6,6 +6,8 @@ import { useToast } from '../context/ToastContext'
 
 const initialForm = { name: '', email: '', password: '' }
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function SignupPage() {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
@@ -21,9 +23,14 @@ export default function SignupPage() {
   const validate = () => {
     const nextErrors = {}
     if (!form.name.trim()) nextErrors.name = 'Name is required.'
+    else if (form.name.trim().length < 2) nextErrors.name = 'Name must be at least 2 characters.'
+
     if (!form.email.trim()) nextErrors.email = 'Email is required.'
+    else if (!emailPattern.test(form.email.trim())) nextErrors.email = 'Enter a valid email address.'
+
     if (!form.password.trim()) nextErrors.password = 'Password is required.'
-    if (form.password && form.password.length < 6) nextErrors.password = 'Password must be at least 6 characters.'
+    else if (form.password.length < 8) nextErrors.password = 'Password must be at least 8 characters.'
+    else if (!/[A-Z]/.test(form.password) || !/[0-9]/.test(form.password)) nextErrors.password = 'Use at least one uppercase letter and one number.'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
