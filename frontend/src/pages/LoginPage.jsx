@@ -9,6 +9,7 @@ const initialForm = { email: '', password: '' }
 export default function LoginPage() {
   const [form, setForm] = useState(initialForm)
   const [submitting, setSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const { login } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
@@ -42,12 +43,18 @@ export default function LoginPage() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Email</label>
-            <input className="form-control" type="email" name="email" value={form.email} onChange={handleChange} />
+            <input className="form-control" type="email" name="email" autoComplete="email" value={form.email} onChange={handleChange} placeholder="you@example.com" />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
-            <input className="form-control" type="password" name="password" value={form.password} onChange={handleChange} />
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <label className="form-label mb-0">Password</label>
+              <button type="button" className="btn btn-link login-toggle" onClick={() => setShowPassword((current) => !current)}>
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            <input className="form-control" type={showPassword ? 'text' : 'password'} name="password" autoComplete="current-password" value={form.password} onChange={handleChange} placeholder="Enter your password" />
           </div>
+          <div className="login-hint">Tip: use the same email you signed up with to preserve your saved analyses.</div>
           <LoadingButton type="submit" loading={submitting}>Sign in</LoadingButton>
           <p className="auth-switch">
             New here? <Link to="/signup">Create an account</Link>

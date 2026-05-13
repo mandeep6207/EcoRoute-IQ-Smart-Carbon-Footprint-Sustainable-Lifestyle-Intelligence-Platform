@@ -437,6 +437,22 @@ h1, h2, h3, h4, h5 {
   font-weight: 700;
 }
 
+.login-toggle {
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0;
+}
+
+.login-hint {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .input-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
