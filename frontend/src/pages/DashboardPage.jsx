@@ -95,10 +95,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="stats-row">
-        <StatCard label="Carbon score" value={latestAnalysis?.carbon_score ?? 'N/A'} hint="Lower is better" accent="blue" />
-        <StatCard label="Monthly CO₂" value={`${latestAnalysis?.monthly_co2 ?? 0} kg`} hint="Estimated footprint" accent="green" />
-        <StatCard label="Sustainability rating" value={latestAnalysis?.sustainability_rating ?? '—'} hint="Impact category" accent="amber" />
-        <StatCard label="Top source" value={latestAnalysis?.result?.top_emission_source ?? '—'} hint="Highest leverage area" accent="violet" />
+        <StatCard label="Carbon score" value={latestAnalysis?.carbon_score ?? 'N/A'} hint="Lower is better" accent="blue" icon="◎" delta="Current footprint score" />
+        <StatCard label="Monthly CO₂" value={`${latestAnalysis?.monthly_co2 ?? 0} kg`} hint="Estimated footprint" accent="green" icon="◈" delta="Per monthly habit profile" />
+        <StatCard label="Sustainability rating" value={latestAnalysis?.sustainability_rating ?? '—'} hint="Impact category" accent="amber" icon="⬢" delta="Rule-based score band" />
+        <StatCard label="Top source" value={latestAnalysis?.result?.top_emission_source ?? '—'} hint="Highest leverage area" accent="violet" icon="⬟" delta="Best near-term reduction target" />
       </div>
 
       <div className="chart-card page-card">
