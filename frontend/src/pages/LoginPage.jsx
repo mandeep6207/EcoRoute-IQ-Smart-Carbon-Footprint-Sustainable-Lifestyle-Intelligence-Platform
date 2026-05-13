@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import LoadingButton from '../components/LoadingButton'
 import { useToast } from '../context/ToastContext'
 
 const initialForm = { email: '', password: '' }
@@ -47,9 +48,7 @@ export default function LoginPage() {
             <label className="form-label">Password</label>
             <input className="form-control" type="password" name="password" value={form.password} onChange={handleChange} />
           </div>
-          <button className="btn btn-primary w-100" type="submit" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </button>
+          <LoadingButton type="submit" loading={submitting}>Sign in</LoadingButton>
           <p className="auth-switch">
             New here? <Link to="/signup">Create an account</Link>
           </p>

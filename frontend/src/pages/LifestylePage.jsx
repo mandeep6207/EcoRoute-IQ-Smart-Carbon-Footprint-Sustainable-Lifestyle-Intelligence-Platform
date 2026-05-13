@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import LoadingButton from '../components/LoadingButton'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 
@@ -89,9 +90,9 @@ export default function LifestylePage() {
         ))}
 
         <div className="input-actions">
-          <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
-            {submitting ? 'Analyzing...' : 'Run carbon analysis'}
-          </button>
+          <LoadingButton type="submit" loading={submitting} className="btn btn-primary btn-lg">
+            Run carbon analysis
+          </LoadingButton>
         </div>
       </form>
     </div>
